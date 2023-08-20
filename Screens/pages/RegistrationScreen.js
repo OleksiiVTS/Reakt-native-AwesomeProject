@@ -1,62 +1,80 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import { StatusBar } from "expo-status-bar";
+import PhotoBG from "../images/PhotoBG.jpg";
+import { useNavigation } from "@react-navigation/native";
 // import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import {
   View,
-  SafeAreaView,
-  ImageBackground,
   StyleSheet,
-  ScrollView,
+  Alert,
   Text,
   TextInput,
   Pressable,
   Image,
-  Keyboard,
   TouchableWithoutFeedback,
   KeyboardAvoidingView,
   Platform,
+  TouchableOpacity,
+  Keyboard,
+  ImageBackground,
 } from "react-native";
+// import { usePhonebook } from "redux/usePhonebook";
 // import add from '../images/add.svg';
 import addPhoto from "../images/addPhoto.jpg";
 
 export default function RegistrationScreen() {
-  const [login, setLogin] = useState("");
-  const [visiblePassword, setVisiblePassword] = useState(true);
+  // const { getUser } = usePhonebook();
+  const [login, setLogin] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [visiblePassword, setVisiblePassword] = React.useState(true);
+  const navigation = useNavigation();
+  const onLogin = ({ navigation }) => {
+    Alert.alert("Credentials", `${login} + ${email} + ${password}`);
+  };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <ScrollView>
-        <View style={styles.containerImage}>
-          <Image alignToCenter style={styles.image} source={addPhoto}></Image>
-          <Pressable
-            style={
-              true
-                ? styles.buttonImage
-                : [styles.buttonImage, styles.buttonAddImage]
-            }
-          >
-            <View
-              style={true ? styles.plus : [styles.plus, styles.iconAddImage]}
-            />
-            <View
-              style={true ? styles.minus : [styles.minus, styles.iconAddImage]}
-            />
-          </Pressable>
-        </View>
+      <ImageBackground
+        source={PhotoBG}
+        resizeMode="cover"
+        imageStyle={styles.imageBack}
+      >
         <View alignItems="center" style={styles.form}>
+          <View style={styles.containerImage}>
+            <Image alignToCenter style={styles.image} source={addPhoto}></Image>
+            <Pressable
+              style={
+                true
+                  ? styles.buttonImage
+                  : [styles.buttonImage, styles.buttonAddImage]
+              }
+            >
+              <View
+                style={true ? styles.plus : [styles.plus, styles.iconAddImage]}
+              />
+              <View
+                style={
+                  true ? styles.minus : [styles.minus, styles.iconAddImage]
+                }
+              />
+            </Pressable>
+          </View>
+          <Text style={styles.text}>Реєстрація</Text>
           <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "padding" : "height"}
-            style={styles.container}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
           >
-            <Text style={styles.text}>Реєстрація</Text>
             <TextInput
+              autoFocus
               style={styles.input}
-              onChange={setLogin}
+              onChangeText={setLogin}
               value={login}
               placeholder="Логін"
-              autoFocus
             />
             <TextInput
               style={styles.input}
+              onChangeText={setEmail}
+              value={email}
               dataDetectorTypes="address"
               inputMode="email"
               keyboardType="email-address"
@@ -65,6 +83,8 @@ export default function RegistrationScreen() {
             <View>
               <TextInput
                 style={styles.input}
+                onChangeText={setPassword}
+                value={password}
                 autoComplete="new-password"
                 secureTextEntry={visiblePassword && true}
                 maxLength={20}
@@ -75,34 +95,45 @@ export default function RegistrationScreen() {
                 style={styles.showButton}
               >
                 <Text style={styles.showText}>
+                  {/* <Text style={{ fontFamily: "Roboto-Black", fontSize: 16 }}> */}
                   {visiblePassword ? "Показати" : "Сховати"}
                 </Text>
               </Pressable>
             </View>
+            <TouchableOpacity onPress={onLogin} style={styles.button}>
+              <Text style={styles.textButton}>Зареєстуватися</Text>
+            </TouchableOpacity>
           </KeyboardAvoidingView>
-          <Pressable style={styles.button}>
-            <Text style={styles.textButton}>Зареєстуватися</Text>
-          </Pressable>
-          <Text style={styles.link} dataDetectorType="link">
+          <Text
+            style={styles.link}
+            onPress={() => navigation.navigate("LoginScreen")}
+            dataDetectorType="link"
+          >
             Вже є акаунт? Увійти
           </Text>
         </View>
-      </ScrollView>
+        <StatusBar style="auto" />
+      </ImageBackground>
     </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  // container: {
+  //   flex: 1,
+  // },
+  imageBack: {
     flex: 1,
-    padding: 0,
     margin: 0,
+    minHeight: 812,
+    // width: '100%',
+    justifyContent: "center",
   },
   containerImage: {
     position: "absolute",
     left: "50%",
     marginLeft: -60,
-    top: 203,
+    top: -60,
     zIndex: 1,
   },
   image: {
@@ -113,7 +144,7 @@ const styles = StyleSheet.create({
   showText: {
     fontFamily: "Roboto",
     fontSize: 16,
-    fontWeight: 400,
+    fontWeight: "400",
     lineHeight: 19,
     textAlign: "right",
     color: "#1B4371",
@@ -164,7 +195,7 @@ const styles = StyleSheet.create({
   text: {
     marginTop: 92,
     color: "#212121",
-    fontWeight: 500,
+    fontWeight: "500",
     fontSize: 30,
     lineHeight: 35.16,
     textAlign: "center",
@@ -186,7 +217,7 @@ const styles = StyleSheet.create({
   link: {
     justifyContent: "center",
     marginTop: 16,
-    fontWeight: 400,
+    fontWeight: "400",
     fontSize: 16,
     lineHeight: 18.75,
     color: "#1B4371",
@@ -194,10 +225,11 @@ const styles = StyleSheet.create({
   },
 
   form: {
-    display: "flex",
+    flex: 1,
     // alignItems: 'center',
-    marginTop: 263,
-    width: 375,
+    marginTop: 293,
+    // marginTop: 240,
+    width: "100%",
     minHeight: 549,
     borderTopRightRadius: 25,
     borderTopLeftRadius: 25,
