@@ -18,19 +18,20 @@ import {
   Keyboard,
   ImageBackground,
 } from "react-native";
-// import { usePhonebook } from "redux/usePhonebook";
+import { usePhonebook } from "redux/usePhonebook";
 // import add from '../images/add.svg';
 import addPhoto from "../images/addPhoto.jpg";
 
 export default function RegistrationScreen() {
-  // const { getUser } = usePhonebook();
+  const { getUser } = usePhonebook();
   const [login, setLogin] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [visiblePassword, setVisiblePassword] = React.useState(true);
   const navigation = useNavigation();
-  const onLogin = ({ navigation }) => {
+  const onLogin = () => {
     Alert.alert("Credentials", `${login} + ${email} + ${password}`);
+    getUser({ login, email, password });
   };
 
   return (
